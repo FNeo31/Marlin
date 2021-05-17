@@ -38,7 +38,17 @@
 // Use one of these or SDCard-based Emulation will be used
 #if NO_EEPROM_SELECTED
   //#define SRAM_EEPROM_EMULATION                 // Use BackSRAM-based EEPROM emulation
-  #define FLASH_EEPROM_EMULATION                  // Use Flash-based EEPROM emulation
+  //#define FLASH_EEPROM_EMULATION                  // Use Flash-based EEPROM emulation
+  #define I2C_EEPROM
+#endif
+
+#if ENABLED(I2C_EEPROM)
+
+// uncomment the size of EEPROM you are using.
+#define MARLIN_EEPROM_SIZE 0x7FFF // EEPROM end address AT24C256 (32kB)
+//#define MARLIN_EEPROM_SIZE 0x3FFF // EEPROM end address AT24C128 (16kB)
+//#define MARLIN_EEPROM_SIZE 0x1FFF // EEPROM end address AT24C64 (8kB)
+//#define MARLIN_EEPROM_SIZE 0x0FFF // EEPROM end address AT24C32 (4kB)
 #endif
 
 #if ENABLED(FLASH_EEPROM_EMULATION)
@@ -168,6 +178,20 @@
 #define E2_ENABLE_PIN                       PF0
 #ifndef E2_CS_PIN
   #define E2_CS_PIN                         PG12
+#endif
+
+#define I_STEP_PIN                         PD15
+#define I_DIR_PIN                          PE7
+#define I_ENABLE_PIN                       PA3
+#ifndef I_CS_PIN
+  #define I_CS_PIN                         PG15
+#endif
+
+#define J_STEP_PIN                         PD13
+#define J_DIR_PIN                          PG9
+#define J_ENABLE_PIN                       PF0
+#ifndef J_CS_PIN
+  #define J_CS_PIN                         PG12
 #endif
 
 //
@@ -310,10 +334,38 @@
   #define SD_MISO_PIN                       PA6
   #define SD_MOSI_PIN                       PB5
   #define SD_DETECT_PIN                     PB11
+  
 
 #elif SD_CONNECTION_IS(CUSTOM_CABLE)
   #error "CUSTOM_CABLE is not a supported SDCARD_CONNECTION for this board"
 #endif
+
+//
+// M3/M4/M5 - Spindle/Laser Control
+//
+  #if HAS_CUTTER && !defined(SPINDLE_LASER_ENA_PIN)
+    #define SPINDLE_LASER_ENA_PIN           TEMP_BED_PIN     // Pullup or pulldown!
+    #define SPINDLE_LASER_PWM_PIN           SERVO0_PIN   // Hardware PWM
+	
+    #define SPINDLE_DIR_PIN                 PA2   
+  #endif
+  
+ //
+//Joystick pins
+//	
+
+#if ENABLED(JOYSTICK)
+  #define JOY_X_PIN   PG0   // Experimental
+  #define JOY_Y_PIN   PG1   // Experimental
+  #define JOY_Z_PIN   PF14  // Experimental
+  #define JOY_EN_PIN  PC7   // Experimental
+#endif
+
+//
+//Feedhold and Resume pins
+//
+  //#define FEEDHOLD_PIN  PF5 // Experimental
+  //#define RESUME_PIN    PF6 // Experimental
 
 #if ENABLED(BTT_MOTOR_EXPANSION)
   /**       _____                        _____
